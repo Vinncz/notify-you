@@ -1,0 +1,36 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="resend_notification_interval_entries">
+        <item>15 Minutes</item>
+        <item>30 Minutes</item>
+        <item>60 Minutes</item>
+        <item>90 Minutes</item>
+        <item>120 Minutes</item>
+    </string-array>
+
+    <string-array name="resend_notification_interval_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>90</item>
+        <item>120</item>
+    </string-array>
+
+    <string-array name="alarm_tunes_picker_entries">
+        <item>Never Gonna Give You Up</item>
+        <item>Never Gonna Let You Down</item>
+        <item>Never Gonna Run Around and Desert You</item>
+        <item>Never Gonna Make You Cry</item>
+        <item>Never Gonna Say Goodbye</item>
+        <item>Never Gonna Tell a Lie and Hurt You</item>
+    </string-array>
+
+    <string-array name="alarm_tunes_picker_values">
+        <item>Never Gonna Give You Up</item>
+        <item>Never Gonna Let You Down</item>
+        <item>Never Gonna Run Around and Desert You</item>
+        <item>Never Gonna Make You Cry</item>
+        <item>Never Gonna Say Goodbye</item>
+        <item>Never Gonna Tell a Lie and Hurt You</item>
+    </string-array>
+</resources>

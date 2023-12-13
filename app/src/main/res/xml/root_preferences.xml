@@ -1,0 +1,48 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/messages_header">
+
+        <!--        <EditTextPreference-->
+        <!--            app:key="signature"-->
+        <!--            app:title="@string/signature_title"-->
+        <!--            app:useSimpleSummaryProvider="true" />-->
+
+        <ListPreference
+            app:defaultValue="90"
+            app:entries="@array/resend_notification_interval_entries"
+            app:entryValues="@array/resend_notification_interval_values"
+            app:key="resend_notification_interval"
+            app:title="@string/resend_notification_interval"
+            app:useSimpleSummaryProvider="true"
+            app:icon="@drawable/ic_interval"/>
+
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/alarm_header">
+
+        <ListPreference
+            app:defaultValue="Never Gonna Give You Up"
+            app:entries="@array/alarm_tunes_picker_entries"
+            app:entryValues="@array/alarm_tunes_picker_values"
+            app:key="alarm_tunes"
+            app:title="@string/alarm_tunes_picker"
+            app:useSimpleSummaryProvider="true"
+            app:icon="@drawable/ic_alarm"/>
+
+    </PreferenceCategory>
+
+    <!--    <PreferenceCategory app:title="@string/sync_header">-->
+
+    <!--        <SwitchPreferenceCompat-->
+    <!--            app:key="sync"-->
+    <!--            app:title="@string/sync_title" />-->
+
+    <!--        <SwitchPreferenceCompat-->
+    <!--            app:dependency="sync"-->
+    <!--            app:key="attachment"-->
+    <!--            app:summaryOff="@string/attachment_summary_off"-->
+    <!--            app:summaryOn="@string/attachment_summary_on"-->
+    <!--            app:title="@string/attachment_title" />-->
+
+    <!--    </PreferenceCategory>-->
+
+</PreferenceScreen>
