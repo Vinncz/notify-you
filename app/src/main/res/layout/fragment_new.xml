@@ -4,70 +4,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.fragments.NewFragment"
-    android:layout_marginTop="24dp">
-
-
+    android:layout_marginTop="24dp"
+>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+    >
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Task Name"
             android:layout_marginBottom="8dp">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/CustomNotificationHead"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
-
+            />
         </com.google.android.material.textfield.TextInputLayout>
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textField2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Task Description"
-            android:layout_marginBottom="8dp">
-
+            android:layout_marginBottom="8dp"
+        >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/CustomNotificationBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="160dp"
-                android:gravity="top
-"
-                />
-
+                android:gravity="top"
+            />
         </com.google.android.material.textfield.TextInputLayout>
-
         <com.google.android.material.materialswitch.MaterialSwitch
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Attach Alarm"
-            android:id="@+id/useAlarm"/>
-
-        <TimePicker
-            android:id="@+id/alarmValue"
-            android:layout_width="match_parent"
+            android:id="@+id/useAlarm"
+        />
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:headerBackground="#4351D0"
-            android:numbersBackgroundColor="#F0F2FE"
-            android:numbersSelectorColor="#4351CF" />
-
-        <Button
+            android:id="@+id/selectedTimeTextView"
+        />
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/NotificationButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Insert"
             android:height="56dp"
             style="@style/Widget.Material3.Button.Icon"
-            />
-
+        />
     </LinearLayout>
-
 </FrameLayout>

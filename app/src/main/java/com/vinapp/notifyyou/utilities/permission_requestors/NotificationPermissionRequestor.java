@@ -39,10 +39,6 @@ public class NotificationPermissionRequestor implements PermissionRequestor {
             permissionLauncherSingle.launch(Manifest.permission.POST_NOTIFICATIONS);
         }
 
-        if ( String.valueOf(R.string.debug).equals("true") ) {
-            System.out.println("Hasil request permission ke user: " + result.get());
-        }
-
         return result.get();
     }
 }

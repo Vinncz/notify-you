@@ -43,16 +43,6 @@
             android:layout_marginBottom="150dp"
         />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/timeButton"
-            android:text="click me!" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/selectedTimeTextView"/>
     </LinearLayout>
 
 </FrameLayout>
