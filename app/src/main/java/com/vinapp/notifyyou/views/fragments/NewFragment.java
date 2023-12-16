@@ -112,7 +112,7 @@ public class NewFragment extends Fragment {
 
             TileItem ti = TileItemFactory.make(notificationTitle, notificationBody, alarmTime, false, false);
             TileItemController.ValidationReturnStatement validationReport = tiController.validate(ti);
-            if ( validationReport.isSuccesful == false ) {
+            if ( validationReport.isSuccessful == false ) {
                 Toast.makeText(getContext(), validationReport.message, Toast.LENGTH_SHORT).show();
                 return;
             }

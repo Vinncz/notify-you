@@ -17,7 +17,7 @@
         android:theme="@style/Theme.Notifyyou"
         tools:targetApi="31">
         <provider
-            android:name=".application_starter.AppContextProvider"
+            android:name=".application_starter.GlobalValueProvider"
             android:authorities="${applicationId}.AppContextProvider"
             android:exported="false" />
         <activity
@@ -29,6 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver android:name=".controllers.TileItemController"/>
     </application>
+
 
 </manifest>

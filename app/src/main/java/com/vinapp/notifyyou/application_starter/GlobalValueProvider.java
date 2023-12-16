@@ -1,5 +1,7 @@
 package com.vinapp.notifyyou.application_starter;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,17 +11,22 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class AppContextProvider extends ContentProvider {
+public class GlobalValueProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
         Context context = getContext();
-        AppContextHelper.setAppContext(context);
+        NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        GlobalValueHolder.setAppContext(context);
+        GlobalValueHolder.setAppNotificationManager(notifManager);
+        GlobalValueHolder.setAppAlarmManager(alarmManager);
         return true;
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         return null;
     }
 

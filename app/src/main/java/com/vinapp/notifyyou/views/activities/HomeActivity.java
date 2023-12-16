@@ -11,7 +11,9 @@ import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.vinapp.notifyyou.R;
+import com.vinapp.notifyyou.application_starter.GlobalValueHolder;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
+import com.vinapp.notifyyou.utilities.initializers.NotificationChannelInitializer;
 import com.vinapp.notifyyou.utilities.permission_requestors.NotificationPermissionRequestor;
 import com.vinapp.notifyyou.views.fragments.HomeFragment;
 import com.vinapp.notifyyou.views.fragments.NewFragment;
@@ -31,7 +33,10 @@ public class HomeActivity extends AppCompatActivity {
         activityContext = this;
 
         NotificationPermissionRequestor npr = new NotificationPermissionRequestor(this);
-        npr.requestPermission();
+        if ( npr.requestPermission() ) {
+            NotificationChannelInitializer nci = new NotificationChannelInitializer();
+            nci.initialize(GlobalValueHolder.getAppNotificationManager());
+        }
 
         vm = new ViewModelProvider(this).get(TileItemViewModel.class);
 
@@ -43,12 +48,6 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume () {
         super.onResume();
-        vm = new ViewModelProvider(this).get(TileItemViewModel.class);
-    }
-
-    @Override
-    protected void onStart () {
-        super.onStart();
         vm = new ViewModelProvider(this).get(TileItemViewModel.class);
     }
 

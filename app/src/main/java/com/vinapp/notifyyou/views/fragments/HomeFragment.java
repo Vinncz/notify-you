@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.vinapp.notifyyou.R;
 import com.vinapp.notifyyou.adapters.TileItemAdapter;
@@ -76,42 +75,41 @@ public class HomeFragment extends Fragment {
          * Observe for LiveData changes.
          */
         vm.getPinnedLiveData().observe(getViewLifecycleOwner(), newDataset -> {
-            if ( getResources().getString(R.string.debug).equals("true") ) {
-                System.out.println("pinned adapter's dataset:");
-                for (TileItem ti : newDataset) {
-                    System.out.println("id: " + ti.getId() + " alarm? " + ti.getAlarmIsActive());
+                if ( getResources().getString(R.string.debug).equals("true") ) {
+                    System.out.println("pinned adapter's dataset:");
+                    for (TileItem ti : newDataset) {
+                        System.out.println("id: " + ti.getId() + " alarm? " + ti.getAlarmIsActive());
+                    }
                 }
-            }
 
-            boolean newDatasetIsAvailable = newDataset != null && !containsTheSameData(newDataset, pinnedAdapter.getData());
+                boolean newDatasetIsAvailable = newDataset != null && !containsTheSameData(newDataset, pinnedAdapter.getData());
 
-            if ( newDatasetIsAvailable ) {
-                if ( !pinnedTileItems.isComputingLayout() ) {
-                    pinnedTileItems.post(() -> pinnedAdapter.setData(newDataset));
-                } else {
-                    pinnedPendingUpdate = newDataset;
+                if ( newDatasetIsAvailable ) {
+                    if ( !pinnedTileItems.isComputingLayout() ) {
+                        pinnedTileItems.post(() -> pinnedAdapter.setData(newDataset));
+                    } else {
+                        pinnedPendingUpdate = newDataset;
+                    }
                 }
-            }
-        });
+            });
         vm.getUnpinnedLiveData().observe(getViewLifecycleOwner(), newDataset -> {
-            if ( getResources().getString(R.string.debug).equals("true") ) {
-                System.out.println("unpinned adapter's dataset:");
-                for (TileItem ti : newDataset) {
-                    System.out.println("id: " + ti.getId() + " alarm? " + ti.getAlarmIsActive());
+                if ( getResources().getString(R.string.debug).equals("true") ) {
+                    System.out.println("unpinned adapter's dataset:");
+                    for (TileItem ti : newDataset) {
+                        System.out.println("id: " + ti.getId() + " alarm? " + ti.getAlarmIsActive());
+                    }
                 }
-            }
 
-            boolean newDatasetIsAvailable = newDataset != null && !containsTheSameData(newDataset, unpinnedAdapter.getData());
+                boolean newDatasetIsAvailable = newDataset != null && !containsTheSameData(newDataset, unpinnedAdapter.getData());
 
-            if ( newDatasetIsAvailable ) {
-                Toast.makeText(getContext(), "ada data baru!", Toast.LENGTH_SHORT).show();
-                if ( !unpinnedTileItems.isComputingLayout() ) {
-                    unpinnedTileItems.post(() -> unpinnedAdapter.setData(newDataset));
-                } else {
-                    unpinnedPendingUpdate = newDataset;
+                if ( newDatasetIsAvailable ) {
+                    if ( !unpinnedTileItems.isComputingLayout() ) {
+                        unpinnedTileItems.post(() -> unpinnedAdapter.setData(newDataset));
+                    } else {
+                        unpinnedPendingUpdate = newDataset;
+                    }
                 }
-            }
-        });
+            });
 
         return xmlReference;
     }

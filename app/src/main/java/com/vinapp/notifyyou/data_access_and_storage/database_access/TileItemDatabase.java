@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase;
 import com.vinapp.notifyyou.R;
 import android.content.Context;
 
-import com.vinapp.notifyyou.application_starter.AppContextHelper;
+import com.vinapp.notifyyou.application_starter.GlobalValueHolder;
 import com.vinapp.notifyyou.data_access_and_storage.data_access_objects.TileItemDAO;
 import com.vinapp.notifyyou.models.TileItem;
 
@@ -24,7 +24,7 @@ public abstract class TileItemDatabase extends RoomDatabase {
     }
 
     public static synchronized void initializeInstance () {
-        Context appContext = AppContextHelper.getAppContext();
+        Context appContext = GlobalValueHolder.getAppContext();
         String databaseName = appContext.getResources().getString(R.string.database_name);
 
         instance = Room.databaseBuilder (

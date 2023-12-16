@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vinapp.notifyyou.R;
+import com.vinapp.notifyyou.controllers.TileItemController;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
 import com.vinapp.notifyyou.models.TileItem;
 
@@ -27,10 +28,12 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
 
     private List<TileItem> data;
     private final TileItemViewModel vm;
+    private final TileItemController tic;
 
     public TileItemAdapter (TileItemViewModel _vm) {
         this.data = new ArrayList<>();
         this.vm = _vm;
+        this.tic = new TileItemController();
     }
 
     /**
@@ -91,33 +94,32 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
 
             _holder.pinButton.setOnClickListener(e -> {
                 currentData.setPinned(true);
+                tic.notify(currentData);
                 vm.update(currentData);
                 notifyItemChanged(_position);
             });
             _holder.unpinButton.setOnClickListener(e -> {
                 currentData.setPinned(false);
+                tic.cancel(currentData);
                 vm.update(currentData);
                 notifyItemChanged(_position);
             });
             _holder.deleteButton.setOnClickListener(e -> {
-                currentData.setPinned(true);
+                tic.cancel(currentData);
+                tic.cancelAlarm(currentData);
                 vm.delete(currentData);
                 notifyItemRemoved(_position);
             });
             _holder.alarmSwitch.setOnCheckedChangeListener((buttonReference, isActive) -> {
-                Toast.makeText(buttonReference.getContext(), "Alarm is " + isActive + " for id: " + currentData.getId().toString(), Toast.LENGTH_SHORT).show();
                 currentData.setAlarmIsActive(isActive);
-                if ( isActive ) {
-                    // schedule the alarm with controller
+                if ( isActive )
+                    tic.activateAlarm(currentData);
+                else
+                    tic.cancelAlarm(currentData);
 
-                } else {
-                    // deactivate the alarm
-
-                }
-
+                Toast.makeText(buttonReference.getContext(), currentData.getAlarmTime(), Toast.LENGTH_SHORT).show();
                 vm.updateForAlarmRelatedThings(currentData);
             });
-
             _holder.xmlReference.setOnClickListener(view -> {
                 boolean bodyIsVisible = _holder.body.getVisibility() == View.VISIBLE;
 
@@ -149,7 +151,6 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
             initializeAttribute(_xmlReference);
         }
 
-
         public void bind (TileItem _object) {
             id.setText(_object.getId().toString());
             isPinned.setText(_object.getPinned().toString());
@@ -160,9 +161,13 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
             if ( _object.getPinned()) {
                 unpinButton.setVisibility(View.VISIBLE);
                 pinButton.setVisibility(View.GONE);
+                if ( !tic.notificationIsCurrentlyDisplayed(_object) )
+                    tic.notify(_object);
             } else {
                 pinButton.setVisibility(View.VISIBLE);
                 unpinButton.setVisibility(View.GONE);
+                if ( tic.notificationIsCurrentlyDisplayed(_object) )
+                    tic.cancel(_object);
             }
 
             /*
@@ -179,9 +184,7 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
                 Toast.makeText(e.getContext(), "Delete button is pressed", Toast.LENGTH_SHORT).show();
             });
             /* YOU TOOK HALF OF MY DAY, $#!+#3@D */
-            alarmSwitch.setOnCheckedChangeListener((objectReference, isChecked) -> {
-                Toast.makeText(objectReference.getContext(), "Alarm switch is pressed", Toast.LENGTH_SHORT).show();
-            });
+            alarmSwitch.setOnCheckedChangeListener(null);
 
             alarmTime.setText(_object.getAlarmTime());
             alarmSwitch.setChecked(_object.getAlarmIsActive());
