@@ -20,6 +20,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.card.MaterialCardView;
 import com.vinapp.notifyyou.R;
+import com.vinapp.notifyyou.controllers.TileItemController;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
 import com.vinapp.notifyyou.factories.TileItemFactory;
 import com.vinapp.notifyyou.models.TileItem;
@@ -42,6 +43,7 @@ public class NewFragment extends Fragment {
     private MaterialCardView alarmInput;
     private MaterialTextView selectedTimeTextView;
     private Time selectedTimeValue = new Time();
+    private TileItemController tiController = new TileItemController();
 
     public NewFragment withViewModel (TileItemViewModel _vm) {
         this.vm = _vm;
@@ -109,21 +111,30 @@ public class NewFragment extends Fragment {
             String alarmTime = completeDateTime.substring(11);
 
             TileItem ti = TileItemFactory.make(notificationTitle, notificationBody, alarmTime, false, false);
+            TileItemController.ValidationReturnStatement validationReport = tiController.validate(ti);
+            if ( validationReport.isSuccesful == false ) {
+                Toast.makeText(getContext(), validationReport.message, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             vm.insert(ti);
 
-            title.setText("");
-            body.setText("");
-
-            useAlarm.setChecked(false);
-            selectedTimeValue.hour = calendar.get(Calendar.HOUR_OF_DAY);
-            selectedTimeValue.min  = calendar.get(Calendar.MINUTE);
-
-            selectedTimeTextView.setText(format("%02d:%02d", selectedTimeValue.hour, selectedTimeValue.min));
-
+            resetInputElementsBack(calendar);
             Toast.makeText(getContext(), "Successfully created TileItem!", Toast.LENGTH_SHORT).show();
         });
 
         return xmlReference;
+    }
+
+    private void resetInputElementsBack (Calendar calendar) {
+        title.setText("");
+        body.setText("");
+
+        useAlarm.setChecked(false);
+        selectedTimeValue.hour = calendar.get(Calendar.HOUR_OF_DAY);
+        selectedTimeValue.min  = calendar.get(Calendar.MINUTE);
+
+        selectedTimeTextView.setText(format("%02d:%02d", selectedTimeValue.hour, selectedTimeValue.min));
     }
 
     private void initializeElements (View xmlReference) {

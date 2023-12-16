@@ -17,30 +17,26 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vinapp.notifyyou.R;
-import com.vinapp.notifyyou.controllers.TileItemController;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
 import com.vinapp.notifyyou.models.TileItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHolder> {
 
     private List<TileItem> data;
     private final TileItemViewModel vm;
-    private final TileItemController tic;
 
     public TileItemAdapter (TileItemViewModel _vm) {
         this.data = new ArrayList<>();
         this.vm = _vm;
-        this.tic = new TileItemController();
     }
 
     /**
      * Sets the local data that the adapter will be using.
      * @apiNote After calling this method, the adapter will refresh.
-     * @param _newData
+     * @param _newData The new data which will replace the existing adapter's data
      */
     @SuppressLint("NotifyDataSetChanged")
     public void setData (List<TileItem> _newData) {
@@ -51,7 +47,7 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
     /**
      * Returns the local data that the adapter is using.
      * Typically used for validation.
-     * @return
+     * @return Retrieves the dataset which the holder is using to display data.
      */
     public List<TileItem> getData () {
         return this.data;
@@ -109,10 +105,19 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
                 notifyItemRemoved(_position);
             });
             _holder.alarmSwitch.setOnCheckedChangeListener((buttonReference, isActive) -> {
+                Toast.makeText(buttonReference.getContext(), "Alarm is " + isActive + " for id: " + currentData.getId().toString(), Toast.LENGTH_SHORT).show();
                 currentData.setAlarmIsActive(isActive);
-                // tell controller to activate currentdata's alarm
-                vm.update(currentData);
+                if ( isActive ) {
+                    // schedule the alarm with controller
+
+                } else {
+                    // deactivate the alarm
+
+                }
+
+                vm.updateForAlarmRelatedThings(currentData);
             });
+
             _holder.xmlReference.setOnClickListener(view -> {
                 boolean bodyIsVisible = _holder.body.getVisibility() == View.VISIBLE;
 
@@ -144,6 +149,7 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
             initializeAttribute(_xmlReference);
         }
 
+
         public void bind (TileItem _object) {
             id.setText(_object.getId().toString());
             isPinned.setText(_object.getPinned().toString());
@@ -159,6 +165,10 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
                 unpinButton.setVisibility(View.GONE);
             }
 
+            /*
+             * Here's the very important lesson I learned:
+             * NEVER, EVER, FORGET TO NULL-IZE OR CHANGE ONCLICK LISTENERS INTO A DUMMY.
+             */
             pinButton.setOnClickListener(e -> {
                 Toast.makeText(e.getContext(), "Pin button is pressed", Toast.LENGTH_SHORT).show();
             });
@@ -167,6 +177,10 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
             });
             deleteButton.setOnClickListener(e -> {
                 Toast.makeText(e.getContext(), "Delete button is pressed", Toast.LENGTH_SHORT).show();
+            });
+            /* YOU TOOK HALF OF MY DAY, $#!+#3@D */
+            alarmSwitch.setOnCheckedChangeListener((objectReference, isChecked) -> {
+                Toast.makeText(objectReference.getContext(), "Alarm switch is pressed", Toast.LENGTH_SHORT).show();
             });
 
             alarmTime.setText(_object.getAlarmTime());
