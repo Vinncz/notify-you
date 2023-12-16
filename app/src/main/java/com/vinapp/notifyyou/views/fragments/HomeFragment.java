@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.vinapp.notifyyou.R;
 import com.vinapp.notifyyou.adapters.TileItemAdapter;
-import com.vinapp.notifyyou.adapters.TileItemAdapterKontol;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
 import com.vinapp.notifyyou.models.TileItem;
 
@@ -20,7 +20,6 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private View xmlReference;
     private TileItemViewModel vm;
 
     private List<TileItem> pinnedPendingUpdate;
@@ -41,23 +40,18 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView (LayoutInflater _inflater, ViewGroup _container, Bundle _savedInstanceState) {
-        xmlReference = _inflater.inflate(R.layout.fragment_home, _container, false);
+        View xmlReference = _inflater.inflate(R.layout.fragment_home, _container, false);
 
         RecyclerView pinnedTileItems   = xmlReference.findViewById(R.id.pinnedTileItems);
         RecyclerView unpinnedTileItems = xmlReference.findViewById(R.id.tileItems);
 
-        List<TileItem> pinnedData   = vm.getPinnedLiveData().getValue();
-        List<TileItem> unpinnedData = vm.getUnpinnedLiveData().getValue();
-
         TileItemAdapter pinnedAdapter   = new TileItemAdapter(this.vm);
         TileItemAdapter unpinnedAdapter = new TileItemAdapter(this.vm);
 
-//        pinnedAdapter.setData(pinnedData);
-//        unpinnedAdapter.setData(unpinnedData);
-
         pinnedTileItems.setAdapter(pinnedAdapter);
-        pinnedTileItems.setLayoutManager(new LinearLayoutManager(xmlReference.getContext(), LinearLayoutManager.VERTICAL, false));
         unpinnedTileItems.setAdapter(unpinnedAdapter);
+
+        pinnedTileItems.setLayoutManager(new LinearLayoutManager(xmlReference.getContext(), LinearLayoutManager.VERTICAL, false));
         unpinnedTileItems.setLayoutManager(new LinearLayoutManager(xmlReference.getContext(), LinearLayoutManager.VERTICAL, false));
 
         /*
@@ -115,6 +109,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
             });
+
 
         return xmlReference;
     }

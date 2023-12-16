@@ -21,6 +21,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private Context activityContext;
     private TileItemViewModel vm;
+    private Fragment homeFrag, newFrag, prefFrag;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -69,13 +70,16 @@ public class HomeActivity extends AppCompatActivity {
                     int itemId = item.getItemId();
 
                     if (itemId == R.id.home) {
-                        selectedFragment = new HomeFragment().withViewModel(vm);
+                        homeFrag = homeFrag == null ? new HomeFragment().withViewModel(vm) : homeFrag;
+                        selectedFragment = homeFrag;
 
                     } else if (itemId == R.id.newTileItem) {
-                        selectedFragment = new NewFragment().withViewModel(vm);
+                        newFrag = newFrag == null ? new NewFragment().withViewModel(vm) : newFrag;
+                        selectedFragment = newFrag;
 
                     } else if (itemId == R.id.settings) {
-                        selectedFragment = new PreferenceFragment();
+                        prefFrag = prefFrag == null ? new PreferenceFragment() : prefFrag;
+                        selectedFragment = prefFrag;
 
                     }
 

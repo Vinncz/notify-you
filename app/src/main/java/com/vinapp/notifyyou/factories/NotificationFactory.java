@@ -10,7 +10,7 @@ import com.vinapp.notifyyou.application_starter.AppContextHelper;
 public class NotificationFactory {
 
     public static Notification createPresistent (String _title, String _body) {
-        return new NotificationCompat.Builder(AppContextHelper.getAppContext(), String.valueOf(R.string.notification_channel_id_for_pin_unpin_operation))
+        return new NotificationCompat.Builder(AppContextHelper.getAppContext(), AppContextHelper.getAppContext().getResources().getString(R.string.notification_channel_id_for_pin_unpin_operation))
                 .setOngoing(true)
                 .setContentTitle(_title)
                 .setContentText(_body)

@@ -3,59 +3,86 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".views.fragments.NewFragment"
-    android:layout_marginTop="24dp"
->
+    android:layout_marginTop="24dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
     >
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Task Name"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            android:hint="@string/edit_text_tile_item_title_placeholder"
+            app:boxStrokeColor="@color/cardview_shadow_start_color"
+            android:textColorHint="@color/cardview_shadow_start_color"
+        >
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/CustomNotificationHead"
+                android:id="@+id/ET_title"
+                style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
             />
         </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Task Description"
             android:layout_marginBottom="8dp"
+            android:hint="@string/edit_text_tile_item_body_placeholder"
+            app:boxStrokeColor="@color/cardview_shadow_start_color"
+            android:textColorHint="@color/cardview_shadow_start_color"
         >
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/CustomNotificationBody"
+                android:id="@+id/ET_body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="160dp"
                 android:gravity="top"
+                android:minHeight="130dp"
             />
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.materialswitch.MaterialSwitch
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Attach Alarm"
+            android:text="@string/text_view_attach_alarm_label"
             android:id="@+id/useAlarm"
         />
-        <TextView
-            android:layout_width="wrap_content"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/CV_alarmContainer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/selectedTimeTextView"
-        />
+            android:background="@color/material_dynamic_neutral_variant95"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            app:strokeWidth="0dp"
+        >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+            >
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/TV_selectedTime"
+                    android:textColor="@color/colorOnSurfaceForText"
+                    style="@style/TextAppearance.AppCompat.Display1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00"
+                    android:textFontWeight="800"
+                />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/NotificationButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Insert"
-            android:height="56dp"
+            android:text="@string/new_tile_item_cta"
+            android:height="58dp"
             style="@style/Widget.Material3.Button.Icon"
+            android:textFontWeight="800"
         />
     </LinearLayout>
 </FrameLayout>

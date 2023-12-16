@@ -4,6 +4,7 @@ import com.google.android.material.textview.MaterialTextView;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.button.MaterialButton;
 
+import android.annotation.SuppressLint;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vinapp.notifyyou.R;
+import com.vinapp.notifyyou.controllers.TileItemController;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
 import com.vinapp.notifyyou.models.TileItem;
 
@@ -25,23 +27,32 @@ import java.util.List;
 
 public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHolder> {
 
-    private enum State {
-        NO
-    }
-
     private List<TileItem> data;
     private final TileItemViewModel vm;
+    private final TileItemController tic;
 
     public TileItemAdapter (TileItemViewModel _vm) {
         this.data = new ArrayList<>();
         this.vm = _vm;
+        this.tic = new TileItemController();
     }
 
+    /**
+     * Sets the local data that the adapter will be using.
+     * @apiNote After calling this method, the adapter will refresh.
+     * @param _newData
+     */
+    @SuppressLint("NotifyDataSetChanged")
     public void setData (List<TileItem> _newData) {
         data = _newData;
         notifyDataSetChanged();
     }
 
+    /**
+     * Returns the local data that the adapter is using.
+     * Typically used for validation.
+     * @return
+     */
     public List<TileItem> getData () {
         return this.data;
     }
@@ -51,18 +62,13 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
         boolean dataIsEmpty = data == null || data.isEmpty();
 
         if ( dataIsEmpty )
-            return 1; // to facilitate the showing of empty placeholder
+            return 1; // to facilitate the showing of an empty placeholder
         else
             return data.size();
     }
 
-//    @Override
-//    public int getItemCount () {
-//        return data.size();
-//    }
-
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType (int position) {
         boolean dataIsEmpty = data == null || data.isEmpty();
 
         if ( dataIsEmpty )
@@ -70,11 +76,6 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
         else
             return R.layout.layout_tile_item;
     }
-
-//    @Override
-//    public int getItemViewType(int position) {
-//        return R.layout.layout_tile_item;
-//    }
 
     @NonNull
     @Override
@@ -90,8 +91,8 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
 
         } else {
             TileItem currentData = data.get(_position);
-
             _holder.bind(currentData);
+
             _holder.pinButton.setOnClickListener(e -> {
                 currentData.setPinned(true);
                 vm.update(currentData);
@@ -107,42 +108,24 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
                 vm.delete(currentData);
                 notifyItemRemoved(_position);
             });
+            _holder.alarmSwitch.setOnCheckedChangeListener((buttonReference, isActive) -> {
+                currentData.setAlarmIsActive(isActive);
+                // tell controller to activate currentdata's alarm
+                vm.update(currentData);
+            });
             _holder.xmlReference.setOnClickListener(view -> {
-                boolean isBodyVisible = _holder.body.getVisibility() == View.VISIBLE;
+                boolean bodyIsVisible = _holder.body.getVisibility() == View.VISIBLE;
 
-                if (isBodyVisible) {
-                    _holder.body.animate()
-                            .alpha(0f)
-                            .setDuration(50)
-                            .withEndAction(() -> {
-                                _holder.body.setVisibility(View.GONE);
+                if ( bodyIsVisible )
+                    attachCollapsingAnimation(_holder);
+                else
+                    attachExpandingAnimation(_holder);
 
-                                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) _holder.body.getLayoutParams();
-                                layoutParams.height = 0;
-                                _holder.body.setLayoutParams(layoutParams);
-
-                                TransitionManager.beginDelayedTransition((ViewGroup) _holder.xmlReference.getParent(), new AutoTransition());
-                            }).start();
-                } else {
-                    _holder.body.setVisibility(View.VISIBLE);
-                    _holder.body.setAlpha(0f);
-                    _holder.body.animate()
-                            .alpha(1f)
-                            .setDuration(50)
-                            .start();
-
-                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) _holder.body.getLayoutParams();
-                    layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                    _holder.body.setLayoutParams(layoutParams);
-
-                    TransitionManager.beginDelayedTransition((ViewGroup) _holder.xmlReference.getParent(), new AutoTransition());
-                }
-
-                float rotationDegree = isBodyVisible ? 0f : -180f;
+                float rotationDegree = bodyIsVisible ? 0f : -180f;
                 _holder.expandToggle.animate()
-                        .rotation(rotationDegree)
-                        .setDuration(50)
-                        .start();
+                                    .rotation(rotationDegree)
+                                    .setDuration(50)
+                                    .start();
             });
 
         }
@@ -171,11 +154,9 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
             if ( _object.getPinned()) {
                 unpinButton.setVisibility(View.VISIBLE);
                 pinButton.setVisibility(View.GONE);
-
             } else {
                 pinButton.setVisibility(View.VISIBLE);
                 unpinButton.setVisibility(View.GONE);
-
             }
 
             pinButton.setOnClickListener(e -> {
@@ -195,10 +176,12 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
                 Toast.makeText(e.getContext(), "Expand toggle is pressed", Toast.LENGTH_SHORT).show();
             });
         }
+
         public void bindEmpty () {
-            this.title.setText("It's so empty here!");
-            this.body.setText("Let's create new TileItem, shall we?");
+            this.title.setText(this.xmlReference.getResources().getString(R.string.empty_tile_item_placeholder_title));
+            this.body.setText(this.xmlReference.getResources().getString(R.string.empty_tile_item_placeholder_body));
         }
+
         public void initializeAttribute (View _xmlReference) {
             this.id           = _xmlReference.findViewById(R.id.TV_id);
             this.isPinned     = _xmlReference.findViewById(R.id.TV_isPinned);
@@ -213,9 +196,44 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
 
             this.alarmTime    = _xmlReference.findViewById(R.id.TV_alarm);
             this.alarmSwitch  = _xmlReference.findViewById(R.id.SW_alarmToggle);
-
-//            pinButton.setVisibility  (View.GONE);
-//            unpinButton.setVisibility(View.GONE);
         }
     }
+
+    private static void attachExpandingAnimation (@NonNull ViewHolder _holder) {
+        _holder.body.setVisibility(View.VISIBLE);
+        _holder.body.setAlpha(0f);
+        _holder.body.animate()
+                .alpha(1f)
+                .setDuration(50)
+                .start();
+
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) _holder.body.getLayoutParams();
+        layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        _holder.body.setLayoutParams(layoutParams);
+
+        TransitionManager.beginDelayedTransition(
+            (ViewGroup) _holder.xmlReference.getParent(),
+            new AutoTransition()
+        );
+    }
+
+    private static void attachCollapsingAnimation (@NonNull ViewHolder _holder) {
+        _holder.body.animate()
+                .alpha(0f)
+                .setDuration(50)
+                .withEndAction(() -> {
+                    _holder.body.setVisibility(View.GONE);
+
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) _holder.body.getLayoutParams();
+                    layoutParams.height = 0;
+                    _holder.body.setLayoutParams(layoutParams);
+
+                    TransitionManager.beginDelayedTransition(
+                        (ViewGroup) _holder.xmlReference.getParent(),
+                        new AutoTransition()
+                    );
+                })
+                .start();
+    }
+
 }
