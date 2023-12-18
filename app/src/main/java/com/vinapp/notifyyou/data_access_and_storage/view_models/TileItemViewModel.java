@@ -42,6 +42,8 @@ public class TileItemViewModel extends ViewModel {
         return dao.getUnpinned();
     }
 
+    public LiveData<TileItem> getById (Integer _tileItemId) { return dao.get(_tileItemId);}
+
     public void insert (TileItem _ti) {
         executor.execute( () -> {
             dao.insert(_ti);

@@ -5,6 +5,8 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.button.MaterialButton;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Bundle;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import com.vinapp.notifyyou.R;
 import com.vinapp.notifyyou.controllers.TileItemController;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
 import com.vinapp.notifyyou.models.TileItem;
+import com.vinapp.notifyyou.views.activities.EditTileitemActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -191,6 +194,14 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
 
             expandToggle.setOnClickListener(e -> {
                 Toast.makeText(e.getContext(), "Expand toggle is pressed", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(e.getContext(), EditTileitemActivity.class);
+
+                Bundle dataBundle = new Bundle();
+                dataBundle.putInt("tileItemId", _object.getId());
+
+                intent.putExtras(dataBundle);
+
+                e.getContext().startActivity(intent);
             });
         }
 

@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.service.notification.StatusBarNotification;
 
+import androidx.room.Dao;
+
 import com.vinapp.notifyyou.application_starter.GlobalValueHolder;
 import com.vinapp.notifyyou.factories.NotificationFactory;
 import com.vinapp.notifyyou.models.TileItem;
@@ -104,5 +106,4 @@ public class TileItemController extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, _object.getId(), i, PendingIntent.FLAG_IMMUTABLE);
         alarmManager.cancel(pendingIntent);
     }
-
 }
