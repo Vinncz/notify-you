@@ -14,7 +14,7 @@ import java.util.List;
 @Dao
 public interface TileItemDAO {
 
-    @Query("SELECT * FROM tile_items ORDER BY id DESC LIMIT 1")
+    @Query("SELECT * FROM tile_items ORDER BY createdAt DESC LIMIT 1")
     LiveData<TileItem> getLatest ();
 
     @Query("SELECT * FROM tile_items WHERE id = :id LIMIT 1")
@@ -30,7 +30,7 @@ public interface TileItemDAO {
     LiveData<List<TileItem>> getUnpinned ();
 
     @Insert
-    void insert (TileItem ti);
+    long insert (TileItem ti);
 
     @Update
     void update (TileItem ti);

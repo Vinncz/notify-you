@@ -4,12 +4,16 @@ import static java.lang.String.*;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -20,6 +24,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.card.MaterialCardView;
 import com.vinapp.notifyyou.R;
+import com.vinapp.notifyyou.adapters.TileItemAdapter;
 import com.vinapp.notifyyou.controllers.TileItemController;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
 import com.vinapp.notifyyou.factories.TileItemFactory;
@@ -37,10 +42,10 @@ public class NewFragment extends Fragment {
     }
 
     private TileItemViewModel vm;
-    private MaterialButton submit;
+    private MaterialButton  submit;
     private TextInputEditText title, body;
-    private MaterialSwitch useAlarm;
-    private MaterialCardView alarmInput;
+    private MaterialSwitch useAlarm, immidiatelyPin;
+    private MaterialCardView alarmInput, selectedTimeContainer;
     private MaterialTextView selectedTimeTextView;
     private Time selectedTimeValue = new Time();
     private TileItemController tiController = new TileItemController();
@@ -66,20 +71,20 @@ public class NewFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
 
         selectedTimeTextView.setText(format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)));
-        alarmInput.setVisibility(View.GONE);
+        selectedTimeContainer.setVisibility(View.GONE);
 
         useAlarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
             int currentHour   = selectedTimeValue.hour = calendar.get(Calendar.HOUR_OF_DAY);
             int currentMinute = selectedTimeValue.min  = calendar.get(Calendar.MINUTE);
 
             if ( isChecked ) {
-                alarmInput.setVisibility(View.VISIBLE);
-                alarmInput.setOnClickListener(v -> {
+                attachExpandingAnimation();
+                selectedTimeContainer.setOnClickListener(v -> {
                     MaterialTimePicker.Builder builder = new MaterialTimePicker.Builder()
                             .setTimeFormat(TimeFormat.CLOCK_24H)
                             .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
                             .setHour(currentHour)
-                            .setMinute(currentMinute);
+                            .setMinute(currentMinute + 1);
 
                     MaterialTimePicker materialTimePicker = builder.build();
 
@@ -96,7 +101,7 @@ public class NewFragment extends Fragment {
                 });
 
             } else {
-                alarmInput.setVisibility(View.GONE);
+                attachCollapsingAnimation();
             }
         });
 
@@ -110,14 +115,21 @@ public class NewFragment extends Fragment {
             String completeDateTime = currentDate + " " + format(Locale.getDefault(), "%02d:%02d", selectedTimeValue.hour, selectedTimeValue.min);
             String alarmTime = completeDateTime.substring(11);
 
-            TileItem ti = TileItemFactory.make(notificationTitle, notificationBody, alarmTime, false, false);
+            boolean isAlarmActive = useAlarm.isChecked();
+            boolean pinByDefault = immidiatelyPin.isChecked();
+
+            TileItem ti = TileItemFactory.make(notificationTitle, notificationBody, alarmTime, pinByDefault, isAlarmActive);
             TileItemController.ValidationReturnStatement validationReport = tiController.validate(ti);
             if ( validationReport.isSuccessful == false ) {
                 Toast.makeText(getContext(), validationReport.message, Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            vm.insert(ti);
+            long generatedId = vm.insert(ti);
+            ti.setId((int) generatedId);
+
+            if (isAlarmActive) tiController.activateAlarm(ti);
+            if (pinByDefault) tiController.notify(ti);
 
             resetInputElementsBack(calendar);
             Toast.makeText(getContext(), "Successfully created TileItem!", Toast.LENGTH_SHORT).show();
@@ -131,6 +143,7 @@ public class NewFragment extends Fragment {
         body.setText("");
 
         useAlarm.setChecked(false);
+        immidiatelyPin.setChecked(false);
         selectedTimeValue.hour = calendar.get(Calendar.HOUR_OF_DAY);
         selectedTimeValue.min  = calendar.get(Calendar.MINUTE);
 
@@ -142,7 +155,9 @@ public class NewFragment extends Fragment {
         this.title                = xmlReference.findViewById(R.id.ET_title);
         this.body                 = xmlReference.findViewById(R.id.ET_body);
         this.useAlarm             = xmlReference.findViewById(R.id.useAlarm);
+        this.immidiatelyPin       = xmlReference.findViewById(R.id.immidiatelyPin);
         this.alarmInput           = xmlReference.findViewById(R.id.CV_alarmContainer);
+        this.selectedTimeContainer= xmlReference.findViewById(R.id.CV_selectedTimeContainer);
         this.selectedTimeTextView = xmlReference.findViewById(R.id.TV_selectedTime);
     }
 
@@ -165,6 +180,43 @@ public class NewFragment extends Fragment {
         }
 
         Toast.makeText(getContext(), differenceText, Toast.LENGTH_SHORT).show();
+    }
+
+    private void attachExpandingAnimation () {
+        selectedTimeContainer.setVisibility(View.VISIBLE);
+        selectedTimeContainer.setAlpha(0f);
+        selectedTimeContainer.animate()
+                .alpha(1f)
+                .setDuration(50)
+                .start();
+
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) selectedTimeContainer.getLayoutParams();
+        layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        selectedTimeContainer.setLayoutParams(layoutParams);
+
+        TransitionManager.beginDelayedTransition(
+                (ViewGroup) selectedTimeContainer.getParent().getParent().getParent(),
+                new AutoTransition()
+        );
+    }
+
+    private void attachCollapsingAnimation () {
+        selectedTimeContainer.animate()
+                .alpha(0f)
+                .setDuration(50)
+                .withEndAction(() -> {
+                    selectedTimeContainer.setVisibility(View.GONE);
+
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) selectedTimeContainer.getLayoutParams();
+                    layoutParams.height = 0;
+                    selectedTimeContainer.setLayoutParams(layoutParams);
+
+                    TransitionManager.beginDelayedTransition(
+                            (ViewGroup) selectedTimeContainer.getParent().getParent().getParent(),
+                            new AutoTransition()
+                    );
+                })
+                .start();
     }
 
 }

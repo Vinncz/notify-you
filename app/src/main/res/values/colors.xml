@@ -3,4 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorOnSurfaceForText">#212755</color>
+    <color name="colorPrimary">#4351D0</color>
+    <color name="colorSurfaceContainer">#F1F3FF</color>
+    <color name="selectedTimeBackground">#DBDDEE</color>
 </resources>

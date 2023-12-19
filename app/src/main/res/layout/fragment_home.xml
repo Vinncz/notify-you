@@ -4,45 +4,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.fragments.HomeFragment"
-    android:layout_marginTop="24dp">
-
+    android:layout_marginTop="24dp"
+>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/textView"
+        android:orientation="vertical"
+    >
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pinned_area_label"
-            android:textSize="18sp"
-            android:layout_marginBottom="8dp"
-        />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/pinnedTileItems"
+            android:orientation="vertical"
+            android:id="@+id/LL_pinned_tile_items_container"
+        >
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pinned_area_label"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"
+            />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pinnedTileItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="48dp"
+            />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="48dp"
-        />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/unpinned_area_label"
-            android:textSize="18sp"
-            android:layout_marginBottom="8dp"
-        />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/tileItems"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="150dp"
-        />
-
+            android:orientation="vertical"
+            android:id="@+id/LL_unpinned_tile_items_container"
+        >
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/unpinned_area_label"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"
+            />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tileItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="150dp"
+            />
+        </LinearLayout>
     </LinearLayout>
-
 </FrameLayout>
