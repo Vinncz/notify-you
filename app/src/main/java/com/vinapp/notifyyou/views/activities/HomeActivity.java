@@ -43,6 +43,8 @@ public class HomeActivity extends AppCompatActivity {
         FragmentManager manager = getSupportFragmentManager();
         displayInitialFragment(manager, new HomeFragment().withViewModel(vm));
         handleBottomNavInitialization(manager);
+
+        GlobalValueHolder.setAppMainActivityInstance(this);
     }
 
     @Override
@@ -91,5 +93,15 @@ public class HomeActivity extends AppCompatActivity {
                     return true;
                 }
         );
+    }
+
+    /**
+     * Provides an easy way to switch between fragments that is being displayed in HomeActivity.
+     *
+     * @param _destination must be either: <pre>R.id.home</pre> <pre>R.id.newTileItem</pre> <pre>R.id.settings</pre>
+     */
+    public void goTo (int _destination) {
+        BottomNavigationView bnv = findViewById(R.id.bottomNavigationView);
+        bnv.setSelectedItemId(_destination);
     }
 }

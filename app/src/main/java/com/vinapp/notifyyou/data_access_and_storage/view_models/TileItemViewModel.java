@@ -9,25 +9,29 @@ import com.vinapp.notifyyou.data_access_and_storage.database_access.TileItemData
 import com.vinapp.notifyyou.models.TileItem;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class TileItemViewModel extends ViewModel {
 
     private SavedStateHandle savedStateHandle;
-    private ExecutorService executor;
-    private TileItemDAO dao;
-    private LiveData<List<TileItem>> allTileItems;
-    private LiveData<List<TileItem>> pinnedTileItems;
-    private LiveData<List<TileItem>> unpinnedTileItems;
+    private final ExecutorService executor;
+    private final TileItemDAO dao;
 
     public TileItemViewModel (SavedStateHandle _savedStateHandle) {
         this.dao = TileItemDatabase.getInstance().dao();
-        this.allTileItems = dao.getAll();
         this.savedStateHandle = _savedStateHandle;
-        this.pinnedTileItems = dao.getPinned();
-        this.unpinnedTileItems = dao.getUnpinned();
         this.executor = Executors.newSingleThreadExecutor();
+    }
+
+    public LiveData<TileItem> getLatest () {
+        return dao.getLatest();
+    }
+
+    public LiveData<TileItem> getById (int _id) {
+        return dao.get(_id);
     }
 
     public LiveData<List<TileItem>> getAllLiveData () {
@@ -42,19 +46,22 @@ public class TileItemViewModel extends ViewModel {
         return dao.getUnpinned();
     }
 
-    public void insert (TileItem _ti) {
-        executor.execute( () -> {
-            dao.insert(_ti);
-            this.pinnedTileItems = dao.getPinned();
-            this.unpinnedTileItems = dao.getUnpinned();
-        } );
+    public long insert (TileItem _ti) {
+        Future<Long> future = executor.submit(() -> dao.insert(_ti));
+
+        try {
+            long id = future.get();
+            return id;
+
+        } catch ( InterruptedException | ExecutionException e) {
+            return 0;
+
+        }
     }
 
     public void update (TileItem _ti) {
         executor.execute( () -> {
             dao.update(_ti);
-            this.pinnedTileItems = dao.getPinned();
-            this.unpinnedTileItems = dao.getUnpinned();
         } );
     }
 
@@ -67,8 +74,6 @@ public class TileItemViewModel extends ViewModel {
     public void delete (TileItem _ti) {
         executor.execute( () -> {
             dao.delete(_ti);
-            this.pinnedTileItems = dao.getPinned();
-            this.unpinnedTileItems = dao.getUnpinned();
         } );
     }
 

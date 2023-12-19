@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.service.notification.StatusBarNotification;
@@ -12,21 +11,11 @@ import android.service.notification.StatusBarNotification;
 import com.vinapp.notifyyou.application_starter.GlobalValueHolder;
 import com.vinapp.notifyyou.factories.NotificationFactory;
 import com.vinapp.notifyyou.models.TileItem;
+import com.vinapp.notifyyou.utilities.broadcast_receivers.AlarmBroadcastReceiver;
 
 import java.util.Calendar;
 
-public class TileItemController extends BroadcastReceiver {
-
-    @Override
-    public void onReceive (Context context, Intent intent) {
-        int id = intent.getIntExtra("id", -1);
-        String title = intent.getStringExtra("title");
-        String body = intent.getStringExtra("body");
-
-        NotificationFactory nf = new NotificationFactory();
-        Notification n = nf.createAlarm(title, body);
-        notifManager.notify(id, n);
-    }
+public class TileItemController {
 
     public class ValidationReturnStatement {
         public boolean isSuccessful;
@@ -83,8 +72,8 @@ public class TileItemController extends BroadcastReceiver {
         AlarmManager alarmManager = GlobalValueHolder.getAppAlarmManager();
         Context context = GlobalValueHolder.getAppContext();
 
-        Intent i = new Intent(context, ((BroadcastReceiver) this).getClass());
-        i.putExtra("id", _object.getId());
+        Intent i = new Intent(context, AlarmBroadcastReceiver.getInstance().getClass()).setAction("BROADCAST_ALARM");
+        i.putExtra("idForAlarm", _object.getId());
         i.putExtra("title", _object.getTitle());
         i.putExtra("body", _object.getBody());
 
@@ -99,7 +88,7 @@ public class TileItemController extends BroadcastReceiver {
     public void cancelAlarm (TileItem _object) {
         AlarmManager alarmManager = GlobalValueHolder.getAppAlarmManager();
         Context context = GlobalValueHolder.getAppContext();
-        Intent i = new Intent(context, ((BroadcastReceiver) this).getClass());
+        Intent i = new Intent(context, AlarmBroadcastReceiver.getInstance().getClass());
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, _object.getId(), i, PendingIntent.FLAG_IMMUTABLE);
         alarmManager.cancel(pendingIntent);

@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vinapp.notifyyou.R;
+import com.vinapp.notifyyou.application_starter.GlobalValueHolder;
 import com.vinapp.notifyyou.controllers.TileItemController;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
 import com.vinapp.notifyyou.models.TileItem;
@@ -105,6 +106,7 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
                 notifyItemChanged(_position);
             });
             _holder.deleteButton.setOnClickListener(e -> {
+                currentData.setPinned(false);
                 tic.cancel(currentData);
                 tic.cancelAlarm(currentData);
                 vm.delete(currentData);
@@ -117,7 +119,6 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
                 else
                     tic.cancelAlarm(currentData);
 
-                Toast.makeText(buttonReference.getContext(), currentData.getAlarmTime(), Toast.LENGTH_SHORT).show();
                 vm.updateForAlarmRelatedThings(currentData);
             });
             _holder.xmlReference.setOnClickListener(view -> {
@@ -131,7 +132,7 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
                 float rotationDegree = bodyIsVisible ? 0f : -180f;
                 _holder.expandToggle.animate()
                                     .rotation(rotationDegree)
-                                    .setDuration(50)
+                                    .setDuration(10)
                                     .start();
             });
 
@@ -197,6 +198,9 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
         public void bindEmpty () {
             this.title.setText(this.xmlReference.getResources().getString(R.string.empty_tile_item_placeholder_title));
             this.body.setText(this.xmlReference.getResources().getString(R.string.empty_tile_item_placeholder_body));
+            this.xmlReference.setOnClickListener(e -> {
+                GlobalValueHolder.getAppMainActivityInstance().goTo(R.id.newTileItem);
+            });
         }
 
         public void initializeAttribute (View _xmlReference) {
@@ -221,7 +225,7 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
         _holder.body.setAlpha(0f);
         _holder.body.animate()
                 .alpha(1f)
-                .setDuration(50)
+                .setDuration(10)
                 .start();
 
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) _holder.body.getLayoutParams();
@@ -237,7 +241,7 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
     private static void attachCollapsingAnimation (@NonNull ViewHolder _holder) {
         _holder.body.animate()
                 .alpha(0f)
-                .setDuration(50)
+                .setDuration(10)
                 .withEndAction(() -> {
                     _holder.body.setVisibility(View.GONE);
 

@@ -29,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".controllers.TileItemController"/>
+        <receiver android:name=".utilities.broadcast_receivers.AlarmBroadcastReceiver"/>
     </application>
 
 

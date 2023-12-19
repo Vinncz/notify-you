@@ -8,8 +8,9 @@
     android:layout_marginTop="24dp">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_marginBottom="100dp"
     >
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -30,10 +31,10 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:hint="@string/edit_text_tile_item_body_placeholder"
             app:boxStrokeColor="@color/cardview_shadow_start_color"
             android:textColorHint="@color/cardview_shadow_start_color"
+            android:layout_marginBottom="16dp"
         >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/ET_body"
@@ -43,12 +44,25 @@
                 android:minHeight="130dp"
             />
         </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.materialswitch.MaterialSwitch
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/CV_pinContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/text_view_attach_alarm_label"
-            android:id="@+id/useAlarm"
-        />
+            android:background="@color/material_dynamic_neutral_variant95"
+            android:orientation="vertical"
+            app:strokeWidth="0dp"
+            android:layout_marginBottom="16dp"
+        >
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_view_pin_by_default_label"
+                android:id="@+id/immidiatelyPin"
+            />
+        </com.google.android.material.card.MaterialCardView>
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/CV_alarmContainer"
             android:layout_width="match_parent"
@@ -62,17 +76,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp"
+                android:padding="8dp"
             >
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/TV_selectedTime"
-                    android:textColor="@color/colorOnSurfaceForText"
-                    style="@style/TextAppearance.AppCompat.Display1"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="00:00"
-                    android:textFontWeight="800"
+                    android:text="@string/text_view_attach_alarm_label"
+                    android:id="@+id/useAlarm"
+                    android:paddingHorizontal="8dp"
                 />
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/CV_selectedTimeContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/material_dynamic_neutral_variant95"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginHorizontal="8dp"
+                    app:strokeWidth="0dp"
+                >
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/TV_selectedTime"
+                        android:textColor="@color/colorOnSurfaceForText"
+                        style="@style/TextAppearance.AppCompat.Display1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="00:00"
+                        android:textFontWeight="800"
+                        android:padding="16dp"
+                        android:gravity="center_horizontal"
+                        android:background="@color/selectedTimeBackground"
+                    />
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.button.MaterialButton

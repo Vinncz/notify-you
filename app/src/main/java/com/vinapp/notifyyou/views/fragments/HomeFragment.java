@@ -25,6 +25,9 @@ public class HomeFragment extends Fragment {
     private List<TileItem> pinnedPendingUpdate;
     private List<TileItem> unpinnedPendingUpdate;
 
+    RecyclerView pinnedTileItems;
+    RecyclerView unpinnedTileItems;
+
     public HomeFragment withViewModel (TileItemViewModel vm) {
         this.vm = vm;
         return this;
@@ -42,8 +45,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView (LayoutInflater _inflater, ViewGroup _container, Bundle _savedInstanceState) {
         View xmlReference = _inflater.inflate(R.layout.fragment_home, _container, false);
 
-        RecyclerView pinnedTileItems   = xmlReference.findViewById(R.id.pinnedTileItems);
-        RecyclerView unpinnedTileItems = xmlReference.findViewById(R.id.tileItems);
+        pinnedTileItems   = xmlReference.findViewById(R.id.pinnedTileItems);
+        unpinnedTileItems = xmlReference.findViewById(R.id.tileItems);
 
         TileItemAdapter pinnedAdapter   = new TileItemAdapter(this.vm);
         TileItemAdapter unpinnedAdapter = new TileItemAdapter(this.vm);
