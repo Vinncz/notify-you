@@ -1,21 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.NotifyYou" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#4351D0</item>
+        <item name="colorPrimary">#5162FF</item>
         <item name="colorOnPrimary">#FBFBFE</item>
         <item name="colorPrimaryContainer">#4351D0</item>
         <item name="colorOnTertiaryContainer">#FFF</item>
         <item name="colorTertiaryContainer">#4351D0</item>
         <item name="colorOnPrimaryContainer">#FBFCFE</item>
         <item name="colorOutline">#677183</item>
-        <item name="colorSurfaceContainerHighest">#F1F3FF</item>
-        <item name="colorSurface">#F5F6FF</item>
-        <item name="colorSurfaceContainerHigh">#969BBC</item>
-        <item name="colorSurfaceContainer">#F1F3FF</item>
-        <item name="colorSecondaryContainer">#C3C8F3</item>
-        <item name="colorSurfaceVariant">#F1F3FF</item>
+        <item name="colorSurfaceContainerHighest">#212229</item>
+        <item name="colorSurface">#212229</item>
+        <item name="colorSurfaceContainerHigh">#212229</item>
+        <item name="colorSurfaceContainer">#111633</item>
+        <item name="colorSecondaryContainer">#919ECA</item>
+        <item name="colorSurfaceVariant">#3B3C49</item>
         <item name="colorOnSecondaryContainer">#4B465B</item>
-        <item name="colorOnSurface">#1D1B20</item>
+        <item name="colorOnSurface">#D4D6DC</item>
+        <item name="strokeColor">#00677182</item>
+        <item name="cardBackgroundColor">#3B3C49</item>
+        <item name="backgroundColor">#151620</item>
+        <item name="scrimBackground">#5162FF</item>
     </style>
-
 </resources>

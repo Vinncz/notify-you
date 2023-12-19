@@ -6,4 +6,6 @@
     <color name="colorPrimary">#4351D0</color>
     <color name="colorSurfaceContainer">#F1F3FF</color>
     <color name="selectedTimeBackground">#DBDDEE</color>
+    <color name="material_dynamic_neutral_variant95">#FFEBF1F8</color>
+    <color name="activeCardView">#95BD9E</color>
 </resources>

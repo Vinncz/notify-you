@@ -16,6 +16,10 @@
         <item name="colorSurfaceVariant">#F1F3FF</item>
         <item name="colorOnSecondaryContainer">#4B465B</item>
         <item name="colorOnSurface">#1D1B20</item>
+        <item name="strokeColor">#C3CBDA</item>
+        <item name="cardBackgroundColor">#DBDDEE</item>
+        <item name="backgroundColor">#FFFFFF</item>
+        <item name="scrimBackground">#FFFFFF</item>
     </style>
 
     <style name="Theme.Notifyyou" parent="Base.Theme.NotifyYou" />

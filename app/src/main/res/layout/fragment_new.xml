@@ -17,8 +17,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:hint="@string/edit_text_tile_item_title_placeholder"
-            app:boxStrokeColor="@color/cardview_shadow_start_color"
-            android:textColorHint="@color/cardview_shadow_start_color"
         >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/ET_title"
@@ -32,8 +30,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/edit_text_tile_item_body_placeholder"
-            app:boxStrokeColor="@color/cardview_shadow_start_color"
-            android:textColorHint="@color/cardview_shadow_start_color"
             android:layout_marginBottom="16dp"
         >
             <com.google.android.material.textfield.TextInputEditText
@@ -97,7 +93,6 @@
                 >
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/TV_selectedTime"
-                        android:textColor="@color/colorOnSurfaceForText"
                         style="@style/TextAppearance.AppCompat.Display1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -105,7 +100,7 @@
                         android:textFontWeight="800"
                         android:padding="16dp"
                         android:gravity="center_horizontal"
-                        android:background="@color/selectedTimeBackground"
+                        android:background="?attr/cardBackgroundColor"
                     />
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>

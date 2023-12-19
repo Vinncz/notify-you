@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="?attr/backgroundColor"
     tools:context=".views.activities.HomeActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -16,7 +16,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
+            android:background="?attr/scrimBackground"
             android:fitsSystemWindows="true">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout

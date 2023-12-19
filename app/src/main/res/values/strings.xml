@@ -35,5 +35,6 @@
     <string name="edit_text_tile_item_title_placeholder">What should I do later? (required)</string>
     <string name="text_view_attach_alarm_label">Attach alarm for this note?</string>
     <string name="text_view_pin_by_default_label">Immidiately pin this note?</string>
+    <string name="text_view_pin_label">Pin this note?</string>
     <string name="new_tile_item_cta">Submit</string>
 </resources>

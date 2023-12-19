@@ -132,11 +132,6 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
                 else
                     attachExpandingAnimation(_holder);
 
-                float rotationDegree = bodyIsVisible ? 0f : -180f;
-                _holder.expandToggle.animate()
-                                    .rotation(rotationDegree)
-                                    .setDuration(10)
-                                    .start();
             });
 
         }
@@ -194,7 +189,6 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
             alarmSwitch.setChecked(_object.getAlarmIsActive());
 
             expandToggle.setOnClickListener(e -> {
-                Toast.makeText(e.getContext(), "Expand toggle is pressed", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(e.getContext(), EditTileitemActivity.class);
 
                 Bundle dataBundle = new Bundle();

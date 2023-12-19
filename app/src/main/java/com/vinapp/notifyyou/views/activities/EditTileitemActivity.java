@@ -3,11 +3,14 @@ package com.vinapp.notifyyou.views.activities;
 import static java.lang.String.format;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
@@ -20,29 +23,27 @@ import com.google.android.material.timepicker.TimeFormat;
 import com.vinapp.notifyyou.R;
 import com.vinapp.notifyyou.controllers.TileItemController;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
-import com.vinapp.notifyyou.factories.TileItemFactory;
 import com.vinapp.notifyyou.models.TileItem;
-import com.vinapp.notifyyou.views.fragments.NewFragment;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
 public class EditTileitemActivity extends AppCompatActivity {
 
-    private class Time {
+    private static class Time {
         public Integer hour = 0;
         public Integer min  = 0;
     }
 
     private TileItemViewModel vm;
-    private MaterialButton submit;
+    private MaterialButton  submit;
     private TextInputEditText title, body;
-    private MaterialSwitch useAlarm;
-    private MaterialCardView alarmInput;
+    private MaterialSwitch useAlarm, immidiatelyPin;
+    private MaterialCardView alarmInput, selectedTimeContainer;
     private MaterialTextView selectedTimeTextView;
-    private Time selectedTimeValue = new Time();
-
+    private EditTileitemActivity.Time selectedTimeValue = new EditTileitemActivity.Time();
     private TileItemController tiController = new TileItemController();
 
     @Override
@@ -50,103 +51,128 @@ public class EditTileitemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_tileitem);
 
-        Bundle extras = getIntent().getExtras();
         vm = new ViewModelProvider(this).get(TileItemViewModel.class);
 
+        Bundle extras = getIntent().getExtras();
         if (extras != null) {
             Integer tileItemId = extras.getInt("tileItemId");
-            LiveData<TileItem> tileItem = vm.getById(tileItemId);
-
-            initializeElements();
-
-            Calendar calendar = Calendar.getInstance();
-
-            selectedTimeTextView.setText(format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)));
-            alarmInput.setVisibility(View.GONE);
-
-            useAlarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                int currentHour   = selectedTimeValue.hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int currentMinute = selectedTimeValue.min  = calendar.get(Calendar.MINUTE);
-
-                if ( isChecked ) {
-                    alarmInput.setVisibility(View.VISIBLE);
-                    alarmInput.setOnClickListener(v -> {
-                        MaterialTimePicker.Builder builder = new MaterialTimePicker.Builder()
-                                .setTimeFormat(TimeFormat.CLOCK_24H)
-                                .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
-                                .setHour(currentHour)
-                                .setMinute(currentMinute);
-
-                        MaterialTimePicker materialTimePicker = builder.build();
-
-                        materialTimePicker.addOnPositiveButtonClickListener(dialog -> {
-                            int selectedHour = selectedTimeValue.hour = materialTimePicker.getHour();
-                            int selectedMinute = selectedTimeValue.min = materialTimePicker.getMinute();
-
-                            showToastForTimeDifference(currentHour, currentMinute, selectedHour, selectedMinute);
-
-                            this.selectedTimeTextView.setText(format("%02d:%02d", selectedHour, selectedMinute));
-                        });
-
-                        materialTimePicker.show(this.getSupportFragmentManager(), "tag");
-                    });
-
-                } else {
-                    alarmInput.setVisibility(View.GONE);
+            vm.getById(tileItemId).observe(this, fetchedData -> {
+                if ( fetchedData != null ) {
+                    TileItem ti = fetchedData;
+                    initializeElements(ti);
+                    doYourJob(ti);
                 }
             });
-
-            submit.setOnClickListener(view -> {
-                String notificationTitle = title.getText().toString();
-                String notificationBody = body.getText().toString();
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                String currentDate = dateFormat.format(calendar.getTime());
-
-                String completeDateTime = currentDate + " " + format(Locale.getDefault(), "%02d:%02d", selectedTimeValue.hour, selectedTimeValue.min);
-                String alarmTime = completeDateTime.substring(11);
-
-                TileItem ti = tileItem.getValue();
-                ti.setTitle(notificationTitle);
-                ti.setBody(notificationBody);
-                TileItemController.ValidationReturnStatement validationReport = tiController.validate(ti);
-
-                if ( validationReport.isSuccessful == false ) {
-                    Toast.makeText(this, validationReport.message, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                vm.update(ti);
-
-                resetInputElementsBack(calendar);
-                Toast.makeText(this , "Successfully created TileItem!", Toast.LENGTH_SHORT).show();
-            });
-
 
         } else {
             Toast.makeText(this, "No data received", Toast.LENGTH_SHORT).show();
+            finish();
         }
 
     }
 
-    private void resetInputElementsBack (Calendar calendar) {
-        title.setText("");
-        body.setText("");
+    private void doYourJob (TileItem ti) {
+        Calendar calendar = Calendar.getInstance();
 
-        useAlarm.setChecked(false);
-        selectedTimeValue.hour = calendar.get(Calendar.HOUR_OF_DAY);
-        selectedTimeValue.min  = calendar.get(Calendar.MINUTE);
+        useAlarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if ( isChecked ) {
+                attachExpandingAnimation();
+                attachEditTimeOnClickListener();
 
-        selectedTimeTextView.setText(format("%02d:%02d", selectedTimeValue.hour, selectedTimeValue.min));
+            } else {
+                attachCollapsingAnimation();
+            }
+        });
+
+        submit.setOnClickListener(view -> {
+            String notificationTitle = title.getText().toString();
+            String notificationBody = body.getText().toString();
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            String currentDate = dateFormat.format(calendar.getTime());
+
+            String completeDateTime = currentDate + " " + format(Locale.getDefault(), "%02d:%02d", selectedTimeValue.hour, selectedTimeValue.min);
+            String alarmTime = completeDateTime.substring(11);
+
+            boolean isAlarmActive = useAlarm.isChecked();
+            boolean pinByDefault = immidiatelyPin.isChecked();
+
+            ti.setTitle(notificationTitle);
+            ti.setBody(notificationBody);
+            ti.setAlarmTime(alarmTime);
+            ti.setPinned(pinByDefault);
+            ti.setAlarmIsActive(isAlarmActive);
+            ti.setModifiedAt(new Timestamp(System.currentTimeMillis()));
+            TileItemController.ValidationReturnStatement validationReport = tiController.validate(ti);
+
+            if ( validationReport.isSuccessful == false ) {
+                Toast.makeText(this, validationReport.message, Toast.LENGTH_SHORT).show();
+                return;
+
+            }
+
+            vm.update(ti);
+            if (isAlarmActive) tiController.activateAlarm(ti);
+            else tiController.cancelAlarm(ti);
+
+            Toast.makeText(this, "Successfully edited TileItem!", Toast.LENGTH_SHORT).show();
+
+            finish();
+        });
     }
 
-    private void initializeElements () {
-        this.submit               = findViewById(R.id.NotificationButton);
-        this.title                = findViewById(R.id.ET_title);
-        this.body                 = findViewById(R.id.ET_body);
-        this.useAlarm             = findViewById(R.id.useAlarm);
-        this.alarmInput           = findViewById(R.id.CV_alarmContainer);
-        this.selectedTimeTextView = findViewById(R.id.TV_selectedTime);
+    private void attachEditTimeOnClickListener () {
+        selectedTimeContainer.setOnClickListener(v -> {
+            MaterialTimePicker.Builder builder = new MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                    .setHour(this.selectedTimeValue.hour)
+                    .setMinute(this.selectedTimeValue.min + 1);
+
+            MaterialTimePicker materialTimePicker = builder.build();
+
+            materialTimePicker.addOnPositiveButtonClickListener(dialog -> {
+                int selectedHour = materialTimePicker.getHour();
+                int selectedMinute = materialTimePicker.getMinute();
+
+                showToastForTimeDifference(this.selectedTimeValue.hour, this.selectedTimeValue.min, selectedHour, selectedMinute);
+
+                this.selectedTimeValue.hour = selectedHour;
+                this.selectedTimeValue.min  = selectedMinute;
+
+                this.selectedTimeTextView.setText(format("%02d:%02d", selectedHour, selectedMinute));
+            });
+
+            materialTimePicker.show(this.getSupportFragmentManager(), "tag");
+        });
+    }
+
+    private void initializeElements (TileItem ti) {
+        this.submit                = findViewById(R.id.BT_editButton);
+        this.title                 = findViewById(R.id.ET_title);
+        this.body                  = findViewById(R.id.ET_body);
+        this.useAlarm              = findViewById(R.id.useAlarm);
+        this.immidiatelyPin        = findViewById(R.id.immidiatelyPin);
+        this.alarmInput            = findViewById(R.id.CV_alarmContainer);
+        this.selectedTimeContainer = findViewById(R.id.CV_selectedTimeContainer);
+        this.selectedTimeTextView  = findViewById(R.id.TV_selectedTime);
+
+        this.title.setText(ti.getTitle());
+        this.body.setText(ti.getBody());
+        this.useAlarm.setChecked(ti.getAlarmIsActive());
+        this.immidiatelyPin.setChecked(ti.getPinned());
+        if (ti.getAlarmIsActive()) {
+            this.selectedTimeContainer.setVisibility(View.VISIBLE);
+        } else {
+            this.selectedTimeContainer.setVisibility(View.GONE);
+        }
+        this.selectedTimeTextView.setText(ti.getAlarmTime());
+
+        this.selectedTimeValue.hour = Integer.parseInt(ti.getAlarmTime().substring(0, 2));
+        this.selectedTimeValue.min  = Integer.parseInt(ti.getAlarmTime().substring(3, 5));
+
+        attachEditTimeOnClickListener();
+        this.selectedTimeTextView.setText(format("%02d:%02d", this.selectedTimeValue.hour, this.selectedTimeValue.min));
     }
 
     private void showToastForTimeDifference (int currentHour, int currentMinute, int selectedHour, int selectedMinute) {
@@ -162,12 +188,49 @@ public class EditTileitemActivity extends AppCompatActivity {
         String differenceText;
         if (hourDifference < 2) {
             int totalMinutes = hourDifference * 60 + minuteDifference;
-            differenceText = String.format("Alarm set for %d minutes from now", totalMinutes);
+            differenceText = String.format("Alarm set for %d minutes from last saved value", totalMinutes);
         } else {
-            differenceText = String.format("Alarm set for %d hours and %d minutes from now", hourDifference, minuteDifference);
+            differenceText = String.format("Alarm set for %d hours and %d minutes from last saved value", hourDifference, minuteDifference);
         }
 
-        Toast.makeText(this , differenceText, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, differenceText, Toast.LENGTH_SHORT).show();
+    }
+
+    private void attachExpandingAnimation () {
+        selectedTimeContainer.setVisibility(View.VISIBLE);
+        selectedTimeContainer.setAlpha(0f);
+        selectedTimeContainer.animate()
+                .alpha(1f)
+                .setDuration(50)
+                .start();
+
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) selectedTimeContainer.getLayoutParams();
+        layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        selectedTimeContainer.setLayoutParams(layoutParams);
+
+        TransitionManager.beginDelayedTransition(
+                ( ViewGroup ) selectedTimeContainer.getParent().getParent().getParent(),
+                new AutoTransition()
+        );
+    }
+
+    private void attachCollapsingAnimation () {
+        selectedTimeContainer.animate()
+                .alpha(0f)
+                .setDuration(50)
+                .withEndAction(() -> {
+                    selectedTimeContainer.setVisibility(View.GONE);
+
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) selectedTimeContainer.getLayoutParams();
+                    layoutParams.height = 0;
+                    selectedTimeContainer.setLayoutParams(layoutParams);
+
+                    TransitionManager.beginDelayedTransition(
+                            (ViewGroup) selectedTimeContainer.getParent().getParent().getParent(),
+                            new AutoTransition()
+                    );
+                })
+                .start();
     }
 
 
