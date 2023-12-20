@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.view.View;
@@ -41,10 +43,24 @@ public class EditTileitemActivity extends AppCompatActivity {
     private MaterialButton  submit;
     private TextInputEditText title, body;
     private MaterialSwitch useAlarm, immidiatelyPin;
-    private MaterialCardView alarmInput, selectedTimeContainer;
+    private MaterialCardView selectedTimeContainer;
     private MaterialTextView selectedTimeTextView;
     private EditTileitemActivity.Time selectedTimeValue = new EditTileitemActivity.Time();
     private TileItemController tiController = new TileItemController();
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler(Looper.getMainLooper()).postDelayed(() -> doubleBackToExitPressedOnce=false, 2000);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +71,11 @@ public class EditTileitemActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            Integer tileItemId = extras.getInt("tileItemId");
+            int tileItemId = extras.getInt("tileItemId");
             vm.getById(tileItemId).observe(this, fetchedData -> {
                 if ( fetchedData != null ) {
-                    TileItem ti = fetchedData;
-                    initializeElements(ti);
-                    doYourJob(ti);
+                    initializeElements(fetchedData);
+                    doYourJob(fetchedData);
                 }
             });
 
@@ -153,7 +168,6 @@ public class EditTileitemActivity extends AppCompatActivity {
         this.body                  = findViewById(R.id.ET_body);
         this.useAlarm              = findViewById(R.id.useAlarm);
         this.immidiatelyPin        = findViewById(R.id.immidiatelyPin);
-        this.alarmInput            = findViewById(R.id.CV_alarmContainer);
         this.selectedTimeContainer = findViewById(R.id.CV_selectedTimeContainer);
         this.selectedTimeTextView  = findViewById(R.id.TV_selectedTime);
 
