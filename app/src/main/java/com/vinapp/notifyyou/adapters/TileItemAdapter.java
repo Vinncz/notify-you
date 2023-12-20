@@ -5,10 +5,12 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.button.MaterialButton;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import com.vinapp.notifyyou.controllers.TileItemController;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
 import com.vinapp.notifyyou.models.TileItem;
 import com.vinapp.notifyyou.views.activities.EditTileitemActivity;
+import com.vinapp.notifyyou.views.activities.HomeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -189,6 +192,7 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
             alarmSwitch.setChecked(_object.getAlarmIsActive());
 
             expandToggle.setOnClickListener(e -> {
+                Intent backIntent = new Intent(GlobalValueHolder.getAppContext(), HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 Intent intent = new Intent(e.getContext(), EditTileitemActivity.class);
 
                 Bundle dataBundle = new Bundle();
@@ -196,7 +200,7 @@ public class TileItemAdapter extends RecyclerView.Adapter<TileItemAdapter.ViewHo
 
                 intent.putExtras(dataBundle);
 
-                e.getContext().startActivity(intent);
+                e.getContext().startActivities(new Intent[] {backIntent, intent});
             });
         }
 

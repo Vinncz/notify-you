@@ -33,10 +33,10 @@ public class HomeActivity extends AppCompatActivity {
         activityContext = this;
 
         NotificationPermissionRequestor npr = new NotificationPermissionRequestor(this);
-        if ( npr.requestPermission() ) {
+        npr.requestPermission();
             NotificationChannelInitializer nci = new NotificationChannelInitializer();
             nci.initialize(GlobalValueHolder.getAppNotificationManager());
-        }
+
 
         vm = new ViewModelProvider(this).get(TileItemViewModel.class);
 

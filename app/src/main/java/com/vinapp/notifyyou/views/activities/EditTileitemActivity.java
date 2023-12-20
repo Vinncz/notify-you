@@ -130,6 +130,8 @@ public class EditTileitemActivity extends AppCompatActivity {
             if (isAlarmActive) tiController.activateAlarm(ti);
             else tiController.cancelAlarm(ti);
 
+            if (pinByDefault) tiController.notify(ti);
+
             Toast.makeText(this, "Successfully edited TileItem!", Toast.LENGTH_SHORT).show();
 
             finish();

@@ -53,7 +53,7 @@ public class TileItemController {
     public void notify (TileItem _object) {
         Integer notifId = _object.getId();
         NotificationFactory nf = new NotificationFactory();
-        Notification notif = nf.createPersistent(_object.getTitle(), _object.getBody());
+        Notification notif = nf.createPersistent(_object);
         notifManager.notify(notifId, notif);
     }
 
