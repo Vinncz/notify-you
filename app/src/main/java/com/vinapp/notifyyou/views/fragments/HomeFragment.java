@@ -1,5 +1,7 @@
 package com.vinapp.notifyyou.views.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import com.vinapp.notifyyou.R;
 import com.vinapp.notifyyou.adapters.TileItemAdapter;
 import com.vinapp.notifyyou.data_access_and_storage.view_models.TileItemViewModel;
+import com.vinapp.notifyyou.factories.TileItemFactory;
 import com.vinapp.notifyyou.models.TileItem;
 
 import java.util.List;
@@ -28,6 +31,9 @@ public class HomeFragment extends Fragment {
     RecyclerView pinnedTileItems;
     RecyclerView unpinnedTileItems;
 
+    private static final String hasTheDatabaseEverBeenSeeded = "NotifyYousDatabaseSeedSharedPreferenceKey";
+
+
     public HomeFragment withViewModel (TileItemViewModel vm) {
         this.vm = vm;
         return this;
@@ -39,6 +45,23 @@ public class HomeFragment extends Fragment {
     public void onCreate (Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         vm = new ViewModelProvider(requireActivity()).get(TileItemViewModel.class);
+
+        seedDatabaseIfItHasNeverBeenSeeded();
+
+    }
+
+    private void seedDatabaseIfItHasNeverBeenSeeded() {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences(hasTheDatabaseEverBeenSeeded, Context.MODE_PRIVATE);
+        boolean databaseHasBeenSeeded = sharedPreferences.getBoolean(hasTheDatabaseEverBeenSeeded, false);
+
+        if (databaseHasBeenSeeded == false) {
+            TileItem ti = TileItemFactory.make("Welcome to NotifyYou","Say hello to your first TileItem!","10:00",false,false);
+            vm.insert(ti);
+
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(hasTheDatabaseEverBeenSeeded, true);
+            editor.apply();
+        }
     }
 
     @Override
