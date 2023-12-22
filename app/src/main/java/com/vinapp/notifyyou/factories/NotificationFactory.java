@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -25,13 +24,12 @@ public class NotificationFactory {
         Intent backIntent = new Intent(GlobalValueHolder.getAppContext(), HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         Intent i = new Intent(GlobalValueHolder.getAppContext(), EditTileitemActivity.class).putExtras(dataBundle);
-        Log.d("FACTORY", "TILEITEM ID: " + _object.getId());
-        PendingIntent pi = PendingIntent.getActivities(GlobalValueHolder.getAppContext(), _object.getId(), new Intent[] {backIntent, i}, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pi = PendingIntent.getActivities(GlobalValueHolder.getAppContext(), _object.getId(), new Intent[] {backIntent, i}, PendingIntent.FLAG_IMMUTABLE);
 
         return new NotificationCompat.Builder(
                 GlobalValueHolder.getAppContext(),
                 GlobalValueHolder.getAppContext().getResources().getString(R.string.notification_channel_id_for_pin_unpin_operation)
-        )
+            )
                 .setAutoCancel(false)
                 .setContentIntent(pi)
                 .setColorized(true)
@@ -53,7 +51,7 @@ public class NotificationFactory {
         return new NotificationCompat.Builder(
                 context,
                 channelId
-        )
+         )
                 .addAction(R.drawable.ic_bell_fullcolor, "Dismiss", dismissPendingIntent)
                 .setOngoing(true)
                 .setContentTitle("It's time to " + _title.toLowerCase() + "!")
