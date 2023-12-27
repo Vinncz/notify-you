@@ -14,3 +14,14 @@ Update released on December 24th, 2023.
 
 Download this release, here:\
 [NotifyYou v1.1.1](https://github.com/Vinncz/notify-you/tree/main/app/release)
+
+# Issues
+Android 14 came with a new feature, where it grants the user to forcefully remove the previously persistent notification. 
+
+Currently, there are no workarounds to address this issue -- one idea is to observe if any of the notification gets dismissed, then put on a new one to replace the dismissed.
+
+However, that may come with the user having to grant the READ_ALL_NOTIFICATIONS, which is very suspicious coming from a productivity app.
+
+Therefore, for the forseeable future, we will be consulting together at the best approach to patch the following issue.
+
+Thank you for your understanding.
